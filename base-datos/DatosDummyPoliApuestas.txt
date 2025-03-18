@@ -1,0 +1,54 @@
+INSERT INTO Usuario (nombre, correo, contraseña, saldo_disponible) VALUES
+('Juan Pérez', 'juan.perez@example.com', 'clave123', 50000.00),
+('Ana Gómez', 'ana.gomez@example.com', 'clave456', 60000.00),
+('Carlos López', 'carlos.lopez@example.com', 'clave789', 70000.00),
+('Laura Méndez', 'laura.mendez@example.com', 'clave101', 80000.00),
+('Pedro Ramírez', 'pedro.ramirez@example.com', 'clave202', 90000.00);
+
+
+INSERT INTO Deporte (nombre_deporte) VALUES
+('Fútbol'),
+('Baloncesto'),
+('Tenis'),
+('Béisbol'),
+('Ping Pong');
+
+
+INSERT INTO Partido (id_deporte, fecha_hora_partido, nombre_equipo_1, nombre_equipo_2, marcador_equipo_1, marcador_equipo_2, monto_minimo_apuesta, monto_maximo_apuesta) VALUES
+(1, '2025-04-10 15:00:00', 'Real Madrid', 'Barcelona', 2, 1, 10000, 50000),
+(2, '2025-04-11 18:00:00', 'Lakers', 'Warriors', 101, 98, 5000, 30000),
+(3, '2025-04-12 14:00:00', 'Nadal', 'Djokovic', 2, 3, 8000, 40000),
+(4, '2025-04-13 19:00:00', 'Yankees', 'Red Sox', 5, 7, 7000, 35000),
+(5, '2025-04-14 20:00:00', 'Team A', 'Team B', 12, 8, 6000, 25000);
+
+
+INSERT INTO Campeonato (id_deporte, id_partido, nombre_campeonato) VALUES
+(1, 1, 'PoliDeportes'),
+(2, 2, 'Poli Finales'),
+(3, 3, 'Poli Polideportes'),
+(4, 4, 'Poli Series'),
+(5, 5, 'Ping Pong Poli');
+
+
+INSERT INTO Apuesta (id_usuario, id_deporte, id_campeonato, id_partido, fecha_hora_partido, id_boleto, valor_boleto, monto_minimo_apuesta, monto_maximo_apuesta, fecha_inicio_apuesta, fecha_fin_apuesta, marcador_apuesta_primer_equipo, marcador_apuesta_segundo_equipo, estadio, premio) VALUES
+(1, 1, 1, 1, '2025-04-10 15:00:00', NULL, 20000, 10000, 50000, '2025-04-01', '2025-04-09', 2, 1, 'Santiago Bernabéu', 50000),
+(2, 2, 2, 2, '2025-04-11 18:00:00', NULL, 10000, 5000, 30000, '2025-04-02', '2025-04-10', 101, 98, 'Staples Center', 30000),
+(3, 3, 3, 3, '2025-04-12 14:00:00', NULL, 15000, 8000, 40000, '2025-04-03', '2025-04-11', 2, 3, 'Poli Estadio', 40000),
+(4, 4, 4, 4, '2025-04-13 19:00:00', NULL, 12000, 7000, 35000, '2025-04-04', '2025-04-12', 5, 7, 'Yankee Stadium', 35000),
+(5, 5, 5, 5, '2025-04-14 20:00:00', NULL, 11000, 6000, 25000, '2025-04-05', '2025-04-13', 12, 8, 'eSports Arena', 25000);
+
+
+INSERT INTO Rifa (id_boleto, valor_boleto, fecha_ejecucion_sorteo, numero_aleatorio_ganador, nombre_rifa, fecha_inicio, fecha_fin_rifa, premio_principal, premio_secundario, premio_terciario, numero_max_participantes, numero_seleccionado_rifa) VALUES
+(1, 10000, '2025-05-01 18:00:00', 42, 'Sorteo Millonario', '2025-04-01', '2025-04-30', 'Carro 0km', 'Moto 250cc', 'Bono de viaje', 100, 25),
+(2, 15000, '2025-06-01 18:00:00', 33, 'Sorteo Electrónica', '2025-05-01', '2025-05-31', 'Laptop Gamer', 'Smartphone', 'Audífonos', 200, 40),
+(3, 20000, '2025-07-01 18:00:00', 87, 'Sorteo de Viajes', '2025-06-01', '2025-06-30', 'Crucero', 'Pasajes Nacionales', 'Cena en Restaurante', 150, 60),
+(4, 12000, '2025-08-01 18:00:00', 51, 'Sorteo Hogar', '2025-07-01', '2025-07-31', 'TV 65”', 'Aspiradora', 'Freidora de Aire', 250, 75),
+(5, 18000, '2025-09-01 18:00:00', 99, 'Sorteo Empresarial', '2025-08-01', '2025-08-31', 'Tablet', 'Escritorio', 'Silla Gamer', 300, 90);
+
+
+INSERT INTO Boleto (valor_boleto, fecha_apertura_boleto, fecha_cierre_boleto, id_venta, fecha_venta, monto_venta, id_apuesta, fecha_inicio_apuesta, marcador_primer_equipo, marcador_segundo_equipo, id_rifa, fecha_ejecucion_sorteo, nombre_rifa, numero_seleccionado_rifa) VALUES
+(10000, '2025-04-01', '2025-04-09', 1, '2025-04-02', 20000, 1, '2025-04-01', 2, 1, 1, '2025-05-01', 'Sorteo Millonario', 25),
+(15000, '2025-04-02', '2025-04-10', 2, '2025-04-03', 30000, 2, '2025-04-02', 101, 98, 2, '2025-06-01', 'Sorteo Electrónica', 40),
+(20000, '2025-04-03', '2025-04-11', 3, '2025-04-04', 40000, 3, '2025-04-03', 2, 3, 3, '2025-07-01', 'Sorteo de Viajes', 60),
+(12000, '2025-04-04', '2025-04-12', 4, '2025-04-05', 35000, 4, '2025-04-04', 5, 7, 4, '2025-08-01', 'Sorteo Hogar', 75),
+(18000, '2025-04-05', '2025-04-13', 5, '2025-04-06', 25000, 5, '2025-04-05', 12, 8, 5, '2025-09-01', 'Sorteo Empresarial', 90);
