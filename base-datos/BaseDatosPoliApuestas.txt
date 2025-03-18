@@ -1,0 +1,123 @@
+-- Creación Base de Datos
+CREATE DATABASE PoliApuestas;
+USE PoliApuestas;
+
+
+-- Creación Tabla Usuario
+CREATE TABLE Usuario (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) UNIQUE NOT NULL,
+    contraseña VARCHAR(255) NOT NULL,
+    saldo_disponible DOUBLE NOT NULL
+);
+
+-- Creación Tabla Deporte
+CREATE TABLE Deporte (
+    id_deporte INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_deporte VARCHAR(100) NOT NULL
+);
+
+
+-- Creación Tabla Partido
+CREATE TABLE Partido (
+    id_partido INT PRIMARY KEY AUTO_INCREMENT,
+    id_deporte INT NOT NULL,
+    fecha_hora_partido DATETIME NOT NULL,
+    nombre_equipo_1 VARCHAR(100) NOT NULL,
+    nombre_equipo_2 VARCHAR(100) NOT NULL,
+    marcador_equipo_1 INT DEFAULT 0,
+    marcador_equipo_2 INT DEFAULT 0,
+    monto_minimo_apuesta DOUBLE NOT NULL,
+    monto_maximo_apuesta DOUBLE NOT NULL,
+    FOREIGN KEY (id_deporte) REFERENCES Deporte(id_deporte)
+);
+
+
+-- Creación Tabla Campeonato
+CREATE TABLE Campeonato (
+    id_campeonato INT PRIMARY KEY AUTO_INCREMENT,
+    id_deporte INT NOT NULL,
+    id_partido INT NOT NULL,
+    nombre_campeonato VARCHAR(100) NOT NULL,
+    FOREIGN KEY (id_deporte) REFERENCES Deporte(id_deporte),
+    FOREIGN KEY (id_partido) REFERENCES Partido(id_partido)
+);
+
+-- Creación Tabla Apuesta
+CREATE TABLE Apuesta (
+    id_apuesta INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    id_deporte INT NOT NULL,
+    id_campeonato INT NOT NULL,
+    id_partido INT NOT NULL,
+    fecha_hora_partido DATETIME NOT NULL,
+    id_boleto INT,
+    valor_boleto DOUBLE NOT NULL,
+    monto_minimo_apuesta DOUBLE NOT NULL,
+    monto_maximo_apuesta DOUBLE NOT NULL,
+    fecha_inicio_apuesta DATE NOT NULL,
+    fecha_fin_apuesta DATE NOT NULL,
+    marcador_apuesta_primer_equipo INT DEFAULT 0,
+    marcador_apuesta_segundo_equipo INT DEFAULT 0,
+    estadio VARCHAR(100),
+    premio DOUBLE,
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario),
+    FOREIGN KEY (id_campeonato) REFERENCES Campeonato(id_campeonato),
+    FOREIGN KEY (id_deporte) REFERENCES Deporte(id_deporte),
+    FOREIGN KEY (id_partido) REFERENCES Partido(id_partido)
+);
+
+-- Creación tabla Rifa
+CREATE TABLE Rifa (
+    id_rifa INT PRIMARY KEY AUTO_INCREMENT,
+    id_boleto INT NOT NULL,
+    valor_boleto DOUBLE NOT NULL,
+    fecha_ejecucion_sorteo DATETIME NOT NULL,
+    numero_aleatorio_ganador INT NOT NULL,
+    nombre_rifa VARCHAR(100) NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin_rifa DATE NOT NULL,
+    premio_principal VARCHAR(100) NOT NULL,
+    premio_secundario VARCHAR(100),
+    premio_terciario VARCHAR(100),
+    numero_max_participantes INT NOT NULL,
+    numero_seleccionado_rifa INT NOT NULL
+);
+
+-- Creación tabla Boleto
+CREATE TABLE Boleto (
+    id_boleto INT PRIMARY KEY AUTO_INCREMENT,
+    valor_boleto DOUBLE NOT NULL,
+    fecha_apertura_boleto DATETIME NOT NULL,
+    fecha_cierre_boleto DATETIME NOT NULL,
+    id_venta INT NOT NULL,
+    fecha_venta DATETIME NOT NULL,
+    monto_venta DOUBLE NOT NULL,
+    id_apuesta INT NOT NULL,
+    fecha_inicio_apuesta DATETIME NOT NULL,
+    marcador_primer_equipo INT DEFAULT 0,
+    marcador_segundo_equipo INT DEFAULT 0,
+    id_rifa INT NOT NULL,
+    fecha_ejecucion_sorteo DATETIME NOT NULL,
+    nombre_rifa VARCHAR(100) NOT NULL,
+    numero_seleccionado_rifa INT NOT NULL,
+    FOREIGN KEY (id_apuesta) REFERENCES Apuesta(id_apuesta) ON DELETE CASCADE,
+    FOREIGN KEY (id_rifa) REFERENCES Rifa(id_rifa)
+);
+
+-- Relación Usuario con Apuesta y Boleto
+ALTER TABLE Usuario 
+ADD COLUMN id_apuesta INT,
+ADD COLUMN fecha_hora_partido DATETIME,
+ADD COLUMN premio_apuesta DOUBLE,
+ADD COLUMN id_rifa INT,
+ADD COLUMN fecha_ejecucion_sorteo DATETIME,
+ADD COLUMN premio_rifa DOUBLE,
+ADD COLUMN id_boleto INT,
+ADD COLUMN valor_boleto DOUBLE,
+ADD COLUMN id_venta INT,
+ADD COLUMN fecha_venta DATETIME,
+ADD FOREIGN KEY (id_apuesta) REFERENCES Apuesta(id_apuesta),
+ADD FOREIGN KEY (id_rifa) REFERENCES Rifa(id_rifa),
+ADD FOREIGN KEY (id_boleto) REFERENCES Boleto(id_boleto);
