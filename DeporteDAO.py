@@ -16,6 +16,7 @@ def getConnection():
         print("Error: No se estableció la conexión a la base de datos.", e)
         return None
 
+# This function is used to close the database connection.
 def unconnection(conn):
     if conn:
         conn.close()
@@ -27,7 +28,7 @@ def findAll():
         return
     
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Deporte")
+    cursor.execute("SELECT * FROM deporte")
     deportes = cursor.fetchall()
     
     for deporte in deportes:
