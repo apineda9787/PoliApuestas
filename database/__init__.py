@@ -1,1 +1,1 @@
-from .PersonaDAO import PersonaDAO  # Asegúrate de que "PersonaDAO" es una clase en PersonaDAO.py
+import UsuarioDAO as p

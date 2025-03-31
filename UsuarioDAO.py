@@ -42,32 +42,54 @@ def buscarPersonaPorNombre(nombre):
     personas = """SELECT * FROM usuario as p WHERE p.nombre LIKE %s"""
     val = ("%{}%".format(nombre),)
 
-    c.execute(personas, val)
+
+    try:
+        nombre = str(nombre)  # Asegurar que es un string
+    except ValueError:
+        print("Error: El nombre debe ser una cadena de texto.")
+        return
+    
+    query = "SELECT * FROM usuario WHERE nombre LIKE %s"
+    val = (f"%{nombre}%",)
+    c.execute(query, val)
 
     personasData = c.fetchall()
 
-    for p in personasData:
-        print(p)
+    if personasData:
+        print("Usuario encontrado:", personasData)
+    else:
+        print(f"⚠️  Usuario con nombre {nombre} no encontrado en la base de datos.")
 
     unconnection(conn)
 
 # This function is used to search for a person by their ID in the database and print the result to the console.
+# Buscar usuario por ID con validación de existencia
 def buscarPersonaPorId(id_usuario):
     conn = getConnection()
+    if not conn:
+        return
+
     c = conn.cursor()
 
-    id_usuario = int(id_usuario)
-    personas = """SELECT * FROM usuario as p WHERE id_usuario = %s"""
+    try:
+        id_usuario = int(id_usuario)  # Asegurar que es un número
+    except ValueError:
+        print("Error: El ID debe ser un número entero.")
+        return
+
+    query = """SELECT * FROM usuario WHERE id_usuario = %s"""
     val = (id_usuario,)
 
-    c.execute(personas, val)
+    c.execute(query, val)
+    usuario = c.fetchone()  # Obtener solo un resultado
 
-    personasData = c.fetchall()
-
-    for p in personasData:
-        print(p)
+    if usuario:
+        print("Usuario encontrado:", usuario)
+    else:
+        print(f"⚠️  Usuario con ID {id_usuario} no encontrado en la base de datos.")
 
     unconnection(conn)
+
 
 # This function is used to create a new person in the database.
 def crearPersona(id_usuario, nombre, correo, contraseña, saldo_disponible):
