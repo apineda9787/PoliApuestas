@@ -7,7 +7,7 @@ def main():
         print("2. Buscar usuario por ID")
         print("3. Buscar usuario por Nombre")
         print("4. Crear un nuevo usuario")
-        print("5. Editar un usuario")
+        print("5. Actualizar un usuario")
         print("6. Eliminar un usuario")
         print("7. Salir")
 
