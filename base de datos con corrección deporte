@@ -1,0 +1,29 @@
+-- Usar la base de datos
+USE PoliApuestas;
+
+-- Mostrar todas las tablas
+SHOW TABLES;
+
+-- Mostrar los registros actuales en la tabla Deporte
+SELECT * FROM Deporte;
+
+-- Insertar deportes si no existen
+INSERT INTO Deporte (nombre_deporte) 
+SELECT 'Fútbol' FROM dual WHERE NOT EXISTS (SELECT 1 FROM Deporte WHERE nombre_deporte = 'Fútbol');
+INSERT INTO Deporte (nombre_deporte) 
+SELECT 'Baloncesto' FROM dual WHERE NOT EXISTS (SELECT 1 FROM Deporte WHERE nombre_deporte = 'Baloncesto');
+INSERT INTO Deporte (nombre_deporte) 
+SELECT 'Tenis' FROM dual WHERE NOT EXISTS (SELECT 1 FROM Deporte WHERE nombre_deporte = 'Tenis');
+
+-- Verificar si los deportes se insertaron correctamente
+SELECT * FROM Deporte;
+
+-- Obtener el ID del deporte "Fútbol"
+SET @id_deporte = (SELECT id_deporte FROM Deporte WHERE nombre_deporte = 'Fútbol' LIMIT 1);
+
+-- Insertar un partido solo si el id_deporte existe
+INSERT INTO Partido (id_deporte, fecha_hora_partido, nombre_equipo_1, nombre_equipo_2, 
+                     marcador_equipo_1, marcador_equipo_2, monto_minimo_apuesta, monto_maximo_apuesta)
+SELECT @id_deporte, '2025-04-01 15:00:00', 'Equipo A', 'Equipo B', 0, 0, 50.0, 500.0
+FROM dual
+WHERE @id_deporte IS NOT NULL;
