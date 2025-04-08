@@ -55,4 +55,3 @@ def eliminar_apuesta(id_apuesta):
         conexion.close()
         print("Apuesta eliminada correctamente.")
 
-    ## hola prueba
