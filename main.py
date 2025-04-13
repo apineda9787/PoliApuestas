@@ -1,157 +1,86 @@
-import database.__init__ as db
-import UsuarioDAO as p
-import DeporteDAO as d
-import RifaDAO as r
+import sys
+import os
+import database.db as db
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database')))
 
-# This script is the main entry point for the application, providing a menu-driven interface for user interaction.
-def main():
-    while True:
-        print("\n--- Menú Principal ---")
-        print("1. Gestión de Usuarios")
-        print("2. Gestión de Deportes")
-        print("3. Gestión de Rifas")
-        print("4. Salir")
-        
-        opcion_principal = input("Seleccione una opción: ")
-        
-        if opcion_principal == "1":
-            menu_usuarios()
-        elif opcion_principal == "2":
-            menu_deportes()
-        elif opcion_principal == "3":
-            menu_rifas()
-        elif opcion_principal == "4":
-            print("Saliendo del sistema...")
-            break
-        else:
-            print("Opción no válida, intente de nuevo.")
+from flask import Flask, jsonify, request
+from sqlalchemy import text
+from typing import Optional
+from model.Usuario import Usuario
 
-def menu_usuarios():
-    while True:
-        print("\n--- Menú CRUD de Usuarios ---")
-        print("1. Mostrar todos los usuarios")
-        print("2. Buscar usuario por ID")
-        print("3. Buscar usuario por Nombre")
-        print("4. Crear un nuevo usuario")
-        print("5. Actualizar un usuario")
-        print("6. Eliminar un usuario")
-        print("7. Volver al menú principal")
+app = Flask(__name__)
 
-        opcion = input("Seleccione una opción: ")
+# Bloque de prueba para verificar la conexión a la base de datos
+try:
+    db.session.execute(text('SELECT 1'))
+    print("Conexión exitosa a la base de datos.")
+except Exception as e:
+    print("Error al conectar a la base de datos:", e)
+    exit(1)  # Termina la ejecución si la conexión falla
 
-        if opcion == "1":
-            p.findAll()
-        elif opcion == "2":
-            id_usuario = input("Digite el ID del usuario a buscar: ")
-            p.buscarPersonaPorId(id_usuario)
-        elif opcion == "3":
-            nombre = input("Digite el nombre del usuario a buscar: ")
-            p.buscarPersonaPorNombre(nombre)
-        elif opcion == "4":
-            id_usuario = input("Digite el ID del nuevo usuario: ")
-            nombre = input("Digite el nombre: ")
-            correo = input("Digite el correo: ")
-            contraseña = input("Digite la contraseña: ")
-            saldo_disponible = input("Digite el saldo disponible: ")
-            p.crearPersona(id_usuario, nombre, correo, contraseña, saldo_disponible)
-        elif opcion == "5":
-            id_usuario = input("Digite el ID del usuario a actualizar: ")
-            nombre = input("Digite el nuevo nombre: ")
-            correo = input("Digite el nuevo correo: ")
-            contraseña = input("Digite la nueva contraseña: ")
-            saldo_disponible = input("Digite el nuevo saldo disponible: ")
-            p.editarPersona(id_usuario, nombre, correo, contraseña, saldo_disponible)
-        elif opcion == "6":
-            id_usuario = input("Digite el ID del usuario a eliminar: ")
-            p.eliminarPersona(id_usuario)
-        elif opcion == "7":
-            break
-        else:
-            print("Opción no válida, intente de nuevo.")
+# Obtener todos los usuarios de la base de datos.
+@app.route('/getUsers', methods=['GET'])
+def get_usuarios():
+    usuarios = db.session.query(Usuario).all()
+    usuarios_dict = [u.to_dict() for u in usuarios]
+    return jsonify(usuarios_dict), 200
 
-def menu_deportes():
-    while True:
-        print("\n--- Menú CRUD de Deportes ---")
-        print("1. Mostrar todos los deportes")
-        print("2. Buscar deporte por ID")
-        print("3. Crear un nuevo deporte")
-        print("4. Actualizar un deporte")
-        print("5. Eliminar un deporte")
-        print("6. Volver al menú principal")
+# Crear un nuevo usuario
+@app.route('/createUser', methods=['POST'])
+def crear_usuario():
+    data = request.get_json()
+    try:
+        nuevo_usuario = Usuario(
+            id_usuario=data['id_usuario'],
+            nombre=data['nombre'],
+            correo=data['correo'],
+            contraseña=data['contraseña'],
+            saldo_disponible=float(data['saldo_disponible'])
+        )
+        db.session.add(nuevo_usuario)
+        db.session.commit()
+        return jsonify({'message': 'Usuario creado', 'id': nuevo_usuario.id_usuario}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
-        opcion = input("Seleccione una opción: ")
+# Actualizar usuario (id_usuario en el body)
+@app.route('/updateUser', methods=['PUT'])
+def actualizar_usuario():
+    data = request.get_json()
+    id_usuario = data.get('id_usuario')
 
-        if opcion == "1":
-            d.findAll()
-        elif opcion == "2":
-            id_deporte = input("Digite el ID del deporte a buscar: ")
-            d.buscarDeportePorId(id_deporte)
-        elif opcion == "3":
-            id_deporte = input("Digite el ID del nuevo deporte: ")
-            nombre_deporte = input("Digite el nombre del nuevo deporte: ")
-            d.crearDeporte(id_deporte, nombre_deporte)
-        elif opcion == "4":
-            id_deporte = input("Digite el ID del deporte a actualizar: ")
-            nombre_deporte = input("Digite el nuevo nombre del deporte: ")
-            d.editarDeporte(id_deporte, nombre_deporte)
-        elif opcion == "5":
-            id_deporte = input("Digite el ID del deporte a eliminar: ")
-            d.eliminarDeporte(id_deporte)
-        elif opcion == "6":
-            break
-        else:
-            print("Opción no válida, intente de nuevo.")
+    if not id_usuario:
+        return jsonify({'error': 'El id_usuario es requerido'}), 400
 
-# Menú de gestión de rifas
-def menu_rifas():
-    while True:
-        print("\n--- Menú CRUD de Rifas ---")
-        print("1. Mostrar todas las rifas")
-        print("2. Buscar rifa por ID")
-        print("3. Crear una nueva rifa")
-        print("4. Actualizar una rifa")
-        print("5. Eliminar una rifa")
-        print("6. Volver al menú principal")
+    usuario = db.session.query(Usuario).get(id_usuario)
+    if usuario:
+        usuario.nombre = data.get('nombre', usuario.nombre)
+        usuario.correo = data.get('correo', usuario.correo)
+        usuario.contraseña = data.get('contraseña', usuario.contraseña)
+        usuario.saldo_disponible = float(data.get('saldo_disponible', usuario.saldo_disponible))
+        db.session.commit()
+        return jsonify({'message': 'Usuario actualizado'}), 200
+    else:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
 
-        opcion = input("Seleccione una opción: ")
+# Eliminar usuario (id_usuario en el body)
+@app.route('/deleteUser', methods=['DELETE'])
+def eliminar_usuario():
+    data = request.get_json()
+    id_usuario = data.get('id_usuario')
 
-        if opcion == "1":
-            r.findAll()
-        elif opcion == "2":
-            id_rifa = input("Digite el ID de la rifa a buscar: ")
-            r.obtener_rifa_por_id(id_rifa)
-        elif opcion == "3":
-            print("\nIngrese los datos de la nueva rifa:")
-            id_boleto = input("ID del boleto: ")
-            valor_boleto = input("Valor del boleto: ")
-            fecha_ejecucion_sorteo = input("Fecha de ejecución del sorteo (YYYY-MM-DD HH:MM:SS): ")
-            numero_aleatorio_ganador = input("Número aleatorio ganador: ")
-            nombre_rifa = input("Nombre de la rifa: ")
-            fecha_inicio = input("Fecha de inicio (YYYY-MM-DD): ")
-            fecha_fin_rifa = input("Fecha de fin de la rifa (YYYY-MM-DD): ")
-            premio_principal = input("Premio principal: ")
-            premio_secundario = input("Premio secundario (opcional): ")
-            premio_terciario = input("Premio terciario (opcional): ")
-            numero_max_participantes = input("Número máximo de participantes: ")
-            numero_seleccionado_rifa = input("Número seleccionado para la rifa: ")
+    if not id_usuario:
+        return jsonify({'error': 'El id_usuario es requerido'}), 400
 
-            r.crear_rifa(id_boleto, valor_boleto, fecha_ejecucion_sorteo, numero_aleatorio_ganador, 
-                         nombre_rifa, fecha_inicio, fecha_fin_rifa, premio_principal, 
-                         premio_secundario, premio_terciario, numero_max_participantes, 
-                         numero_seleccionado_rifa)
-        elif opcion == "4":
-            id_rifa = input("Digite el ID de la rifa a actualizar: ")
-            print("Ingrese los nuevos datos (deje vacío para no modificar):")
-            nuevo_nombre = input("Nuevo nombre de la rifa: ")
-            nuevo_premio_principal = input("Nuevo premio principal: ")
-            r.actualizar_rifa(id_rifa, nuevo_nombre, nuevo_premio_principal)  # Adaptar a los campos editables
-        elif opcion == "5":
-            id_rifa = input("Digite el ID de la rifa a eliminar: ")
-            r.eliminar_rifa(id_rifa)
-        elif opcion == "6":
-            break
-        else:
-            print("Opción no válida, intente de nuevo.")            
+    usuario = db.session.query(Usuario).get(id_usuario)
+    if usuario:
+        db.session.delete(usuario)
+        db.session.commit()
+        return jsonify({'message': 'Usuario eliminado'}), 200
+    else:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    # Crear las tablas si no existen
+    db.Base.metadata.create_all(db.engine)
+    app.run(debug=True, port=5000)
