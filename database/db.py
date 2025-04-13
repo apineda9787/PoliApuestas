@@ -1,16 +1,17 @@
 import mysql.connector
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine # This is used to create a connection to the database.
+from sqlalchemy.ext.declarative import declarative_base # This is used to create a base class for the models.
+from sqlalchemy.orm import sessionmaker # This is used to create a session to interact with the database.
 
-# Esta clase establece la conexión a las base de datos MySQL usando SQLAlchemy
-# SQLAlchemy es un ORM (Object Relational Mapper) que permite interactuar con bases de datos de una manera más sencilla y orientada a objetos.
+# This class is used to create a connection to the database and manage sessions.
+# It uses SQLAlchemy to interact with the database.
+# SQLAlchemy is an ORM (Object Relational Mapper) that allows you to interact with databases using Python objects.
 
 connection_string = "mysql+mysqlconnector://root:Thommy1945*@localhost:3306/poli_apuestas"
 engine = create_engine(connection_string, echo=True)
 
-Session = sessionmaker(bind=engine)
-session = Session()
+Session = sessionmaker(bind=engine) # This creates a session factory that will be used to create sessions.
+session = Session() # This creates a active session that will be used to interact with the database.
 
-# Esta clase es la base para todas las clases de modelo que se definan en el proyecto.
+# This is the base class for the models. All models should inherit from this class.
 Base = declarative_base()
