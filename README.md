@@ -6,7 +6,7 @@ Este proyecto es una API RESTful construida con **Python + Flask + SQLAlchemy**,
 
 - [Flask](https://flask.palletsprojects.com/) - Microframework web de Python.
 - [SQLAlchemy](https://www.sqlalchemy.org/) - ORM para gestionar la base de datos.
-- [MySQL] - Motor de base de datos.
+- [MySQL](https://www.mysql.com/) - Motor de base de datos.
 - [Postman](https://www.postman.com/) - Para pruebas de endpoints.
 
 ---
@@ -98,7 +98,7 @@ python app.py
 
 ## ✨ Autor
 
-- 💼 Proyecto desarrollado por [Tu Nombre](https://github.com/chartorresgg)
+- 💼 Proyecto desarrollado por [Charlie](https://github.com/chartorresgg)
 - 📧 Contacto: chartorresg@gmail.com
 
 ---
