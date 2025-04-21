@@ -4,7 +4,7 @@ from database.db import Base # Base class for the models
 
 # This class represents the 'usuario' table in the database.
 class Usuario(Base):
-    __tablename__ = 'usuario'
+    __tablename__ = 'usuario' # Mapping the class to the 'usuario' table in the database
 
     # Define the columns of the table
     id_usuario = Column(Integer, primary_key=True)
@@ -26,6 +26,6 @@ class Usuario(Base):
     def __repr__(self):
         return f"<Usuario(nombre='{self.nombre}', correo='{self.correo}', saldo={self.saldo_disponible})>"
 
-    # Method to convert the object Usuario, to a dictionary
+    # Method to convert the object Usuario, to a dictionary and return it in a format that can be easily converted to JSON.
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

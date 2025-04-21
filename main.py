@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, request
-from sqlalchemy import text
-from typing import Optional
+from flask import Flask, jsonify, request # Import Flask and other necessary modules
+from sqlalchemy import text # Import text to execute raw SQL queries
+from typing import Optional # Import Optional for type hinting
+
+# ================== Imports class from Model ====================
 from model.Deporte import Deporte
 from model.Usuario import Usuario
 
-import database.db as db
+import database.db as db # Import the database connection and session
 
 # ================== Flask configuration =========================
 
@@ -22,11 +24,11 @@ except Exception as e:
 # ================== USER CRUD ==================
 
 # Get all users from the database
-@app.route('/getUsers', methods=['GET'])
+@app.route('/getUsers', methods=['GET']) # Annotate the route and method
 def get_usuarios():
 
-    usuarios = db.session.query(Usuario).all()
-    usuarios_dict = [u.to_dict() for u in usuarios]
+    usuarios = db.session.query(Usuario).all() # Query all users from the database
+    usuarios_dict = [u.to_dict() for u in usuarios] # Convert each user to a dictionary
 
     return jsonify(usuarios_dict), 200
 
@@ -34,7 +36,7 @@ def get_usuarios():
 @app.route('/createUser', methods=['POST'])
 def crear_usuario():
 
-    data = request.get_json()
+    data = request.get_json() # Get the JSON data from the request
 
     try:
         nuevo_usuario = Usuario(
@@ -45,8 +47,8 @@ def crear_usuario():
             saldo_disponible=float(data['saldo_disponible'])
         )
 
-        db.session.add(nuevo_usuario)
-        db.session.commit()
+        db.session.add(nuevo_usuario) # Add the new user to the session
+        db.session.commit() # Commit the session to save the user to the database
 
         return jsonify({'message': 'Usuario creado', 'id': nuevo_usuario.id_usuario}), 201
     except Exception as e:

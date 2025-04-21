@@ -19,6 +19,6 @@ class Deporte(Base):
     def __repr__(self):
         return f"<Deporte(nombre_deporte='{self.nombre_deporte}')>"
     
-    # Method to convert the object Deport, to a dictionary
+    # Method to convert the object Deport, to a dictionary and return it in a format that can be easily converted to JSON
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

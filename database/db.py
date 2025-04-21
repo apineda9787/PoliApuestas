@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker # This is used to create a session to in
 # SQLAlchemy is an ORM (Object Relational Mapper) that allows you to interact with databases using Python objects.
 
 connection_string = "mysql+mysqlconnector://root:Thommy1945*@localhost:3306/poli_apuestas"
-engine = create_engine(connection_string, echo=True)
+engine = create_engine(connection_string, echo=True) # This creates a connection to the database. The echo=True parameter will log all the SQL statements that are
 
 Session = sessionmaker(bind=engine) # This creates a session factory that will be used to create sessions.
 session = Session() # This creates a active session that will be used to interact with the database.
