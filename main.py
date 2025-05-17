@@ -107,6 +107,7 @@ def get_deportes():
 
     return jsonify(deportes_dict), 200
 
+
 # Create a new sport
 @app.route('/createSport', methods=['POST'])
 def crear_deporte():
